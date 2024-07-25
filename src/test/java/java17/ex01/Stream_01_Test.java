@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -28,8 +29,13 @@ public class Stream_01_Test {
 		List<Pizza> pizzas = new Data().getPizzas();
 
 		// TODO récupérer la liste des pizzas dont le prix est >= 1300
-		List<Pizza> result = null;
+		List<Pizza> result = pizzas.stream()
+				.filter(pizza -> pizza.getPrice() >= 1300)
+				.collect(Collectors.toList());
 
+		System.out.println("Pizzas avec prix >= 1300 : " + result);
+		System.out.println("Taille de la liste : " + result.size());
+		System.out.println("");
 		assertThat(result, hasSize(3));
 		assertThat(result, everyItem(hasProperty("price", anyOf(equalTo(1300), greaterThan(1300)))));
 	}
@@ -39,7 +45,12 @@ public class Stream_01_Test {
 		List<Pizza> pizzas = new Data().getPizzas();
 
 		// TODO compter le nombre de pizzas dont le prix est >= 1300
-		long result = 0L;
+		long result = pizzas.stream()
+				.filter(pizza -> pizza.getPrice() >= 1300)
+				.count();
+
+		System.out.println("Nombre de pizzas avec prix >= 1300 : " + result);
+		System.out.println("");
 
 		assertThat(result, is(3L));
 	}
@@ -50,11 +61,16 @@ public class Stream_01_Test {
 		List<Pizza> pizzas = new Data().getPizzas();
 
 		// TODO valider si au moins une pizza à un prix >= 1300
-		Boolean result1 = null;
+		Boolean result1 = pizzas.stream()
+				.anyMatch(pizza -> pizza.getPrice() >= 1300);
 
 		// TODO valider si au moins une pizza à un prix >= 2000
-		Boolean result2 = null;
+		Boolean result2 = pizzas.stream()
+				.anyMatch(pizza -> pizza.getPrice() >= 2000);
 
+		System.out.println("Au moins une pizza avec prix >= 1300 : " + result1);
+		System.out.println("Au moins une pizza avec prix >= 2000 : " + result2);
+		System.out.println("");
 		assertThat(result1, is(true));
 		assertThat(result2, is(false));
 	}
@@ -65,11 +81,16 @@ public class Stream_01_Test {
 		List<Pizza> pizzas = new Data().getPizzas();
 
 		// TODO valider que toutes les pizzas ont un prix >= 1300
-		Boolean result1 = null;
+		Boolean result1 = pizzas.stream()
+				.allMatch(pizza -> pizza.getPrice() >= 1300);
 
 		// TODO valider que toutes les pizzas ont un prix >= 900
-		Boolean result2 = null;
+		Boolean result2 = pizzas.stream()
+				.allMatch(pizza -> pizza.getPrice() >= 900);
 
+		System.out.println("Toutes les pizzas ont un prix >= 1300 : " + result1);
+		System.out.println("Toutes les pizzas ont un prix >= 900 : " + result2);
+		System.out.println("");
 		assertThat(result1, is(false));
 		assertThat(result2, is(true));
 	}
@@ -80,8 +101,11 @@ public class Stream_01_Test {
 		List<Pizza> pizzas = new Data().getPizzas();
 
 		// TODO valider qu'aucune pizza n'a un prix >= 2000
-		Boolean result1 = null;
+		Boolean result1 = pizzas.stream()
+				.noneMatch(pizza -> pizza.getPrice() >= 2000);
 
+		System.out.println("Aucune pizza avec prix >= 2000 : " + result1);
+		System.out.println("");
 		assertThat(result1, is(true));
 	}
 
@@ -90,8 +114,12 @@ public class Stream_01_Test {
 		List<Order> orders = new Data().getOrders();
 
 		// TODO récupérer une commande faite par un client dont le prénom est "Sophie"
-		Optional<Order> result = null;
+		Optional<Order> result = orders.stream()
+				.filter(order -> order.getCustomer().getFirstname().equals("Sophie"))
+				.findFirst();
 
+		System.out.println("Commande par un client nommé Sophie : " + result);
+		System.out.println("");
 		assertThat(result.isPresent(), is(false));
 	}
 
@@ -102,10 +130,15 @@ public class Stream_01_Test {
 	public void test_stream_filter_adv() throws Exception {
 		List<Order> orders = new Data().getOrders();
 
-		// TODO récupérer la liste de toutes les commandes qui contiennent au moins une
-		// pizza Pépéroni
-		List<Order> result = null;
+		// TODO récupérer la liste de toutes les commandes qui contiennent au moins une pizza Pépéroni
+		List<Order> result = orders.stream()
+				.filter(order -> order.getPizzas().stream()
+						.anyMatch(pizza -> pizza.getName().equals("Pépéroni")))
+				.collect(Collectors.toList());
 
+		System.out.println("Commandes contenant au moins une pizza Pépéroni : " + result);
+		System.out.println("Taille de la liste des commandes : " + result.size());
+		System.out.println("");
 		assertThat(result, hasSize(3));
 	}
 }
